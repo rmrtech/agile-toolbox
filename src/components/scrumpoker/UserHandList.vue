@@ -17,7 +17,7 @@
       <base-button
         :disabled="userHands.length === 0"
         @click="toggleCards"
-      >{{toggleCard ? "Allow Tip In" : "Show"}}</base-button>
+      >{{toggleCard ? "Resume" : "Show"}}</base-button>
     </div>
   </div>
 </template>
