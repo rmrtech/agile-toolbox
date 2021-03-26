@@ -1,0 +1,6 @@
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="5em" height="5em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+      <path d="M7 30a5 5 0 1 1 5-5a5.006 5.006 0 0 1-5 5zm0-8a3 3 0 1 0 3 3a3.003 3.003 0 0 0-3-3z" fill="rgba(59, 130, 246)" stroke="rgba(59, 130, 246)" stroke-width="1" />
+      <path d="M24 26H14v-2h10v-7H8a2.002 2.002 0 0 1-2-2V8a2.002 2.002 0 0 1 2-2h10v2H8v7h16a2.002 2.002 0 0 1 2 2v7a2.002 2.002 0 0 1-2 2z" fill="rgba(245, 158, 11)" stroke="rgba(245, 158, 11)" stroke-width="2" />
+      <path d="M28 12h-6a2.002 2.002 0 0 1-2-2V4a2.002 2.002 0 0 1 2-2h6a2.002 2.002 0 0 1 2 2v6a2.002 2.002 0 0 1-2 2zm-6-8v6h6V4z" fill="rgba(5, 150, 105)" stroke="rgba(5, 150, 105)" stroke-width="1" />
+      <rect x="0" y="0" width="32" height="32" fill="rgba(0, 0, 0, 0)" />
+    </svg>
