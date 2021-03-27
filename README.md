@@ -25,14 +25,14 @@ const firebaseConfig = {
 
 ```
 
-You can now run npm install from the root of the agile-toolbox directory.  
-Build you project by running command npm run build
-To preview the application run npm run serve
+You can now run `npm install` from the root of the agile-toolbox directory.  
+Build you project by running command `npm run build`
+To preview the application run `npm run serve`
 
 After build a `dist` folder is created under root directory with all the deployables.
 The content inside the dist folder can be used to host the application in your private datacenter or cloud.
 
-If you want to host the application in firebase follow the below link.
+If you want to host the application in firebase follow below links.
 
 https://firebase.google.com/docs/hosting/quickstart?authuser=0
 
