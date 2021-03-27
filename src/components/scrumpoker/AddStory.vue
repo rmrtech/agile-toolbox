@@ -10,6 +10,10 @@
           </div>
           <div class="flex flex-col justify-center border-t px-4 py-2 bg-white space-y-3">
             <p v-if="isFormInvalid" class="text-red-500 italic">Please enter all fields</p>
+            <strong
+              v-else-if="storyAdded !== ''"
+              class="text-green-500 italic"
+            >Story {{ storyAdded }} is added successfully</strong>
             <form @submit.prevent="addStory">
               <div>
                 <label for="user_story" class="block text-sm font-medium text-gray-700">User Story</label>
@@ -71,6 +75,8 @@ export default {
     const store = useStore();
 
     const storyId = ref("");
+    const storyAdded = ref("");
+
     const description = ref("");
     const isFormInvalid = ref(false);
     const validation = reactive({
@@ -79,6 +85,12 @@ export default {
     });
 
     function closeModel() {
+      Object.entries(validation).forEach(
+        ([validationProp, value]) => (validation[validationProp] = false)
+      );
+      isFormInvalid.value = false;
+      resetAllMessages();
+      resetAllInputs();
       context.emit("close-model");
     }
 
@@ -94,8 +106,8 @@ export default {
         storyPoints: "?"
       };
       store.dispatch("stories/saveStory", storyDetails);
-      storyId.value = "";
-      description.value = "";
+      storyAdded.value = storyId.value;
+      resetAllInputs();
     }
 
     function validateForm() {
@@ -114,6 +126,16 @@ export default {
     function resetError(invalidField) {
       validation[invalidField] = false;
       isFormInvalid.value = false;
+      resetAllMessages();
+    }
+
+    function resetAllMessages() {
+      storyAdded.value = "";
+    }
+
+    function resetAllInputs() {
+      storyId.value = "";
+      description.value = "";
     }
 
     return {
@@ -123,7 +145,8 @@ export default {
       isFormInvalid,
       validation,
       resetError,
-      addStory
+      addStory,
+      storyAdded
     };
   }
 };
