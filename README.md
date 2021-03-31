@@ -10,6 +10,28 @@ https://firebase.google.com/docs/web/setup?authuser=0
 
 https://firebase.google.com/docs/database/web/start?authuser=0
 
+Add below to your database rules in firebase
+```json
+{
+  "rules": {
+    "sessions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+    },
+    "userActiveSession":{
+      ".read": "auth != null",
+      ".write": "auth != null",
+    },
+    "users":{
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      },
+    }
+  }
+}
+```
+
 After firebase setup update or replace your configuration to the `firebaseConfig` object inside the db-init.js file. Also configure the database url against `databaseURL`
 
 ```javascript
