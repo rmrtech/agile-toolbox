@@ -1,6 +1,6 @@
 {
-  "name": "vite-example",
-  "version": "0.0.0",
+  "name": "agile-toolbox",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
