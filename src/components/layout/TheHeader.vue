@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
 import BaseAvatar from "../ui/BaseAvatar.vue";
 import BaseLogout from "../ui/BaseLogout.vue";
 import BaseMenulink from "../ui/BaseMenulink.vue";

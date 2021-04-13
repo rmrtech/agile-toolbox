@@ -3,9 +3,15 @@
     <div class="max-w-md w-full space-y-8 z-0">
       <login-header></login-header>
       <form @submit.prevent="startSession">
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 grid grid-cols-2 gap-3">
+        <div
+          class="bg-white shadow-md rounded px-8 pt-6 pb-8 grid grid-cols-2 gap-3"
+        >
           <div>
-            <label class="block text-grey-darker text-sm font-bold mb-2" for="username">Username</label>
+            <label
+              class="block text-grey-darker text-sm font-bold mb-2"
+              for="username"
+              >Username</label
+            >
             <input
               class="shadow border rounded w-full py-1 px-3 text-grey-darker focus:outline-none"
               :class="{ invalid: validation.invalidUsername }"
@@ -15,10 +21,16 @@
               placeholder="Username"
               v-model.trim="userName"
             />
-            <p v-if="validation.invalidUsername" class="invalidMessage">Please provide a user name</p>
+            <p v-if="validation.invalidUsername" class="invalidMessage">
+              Please provide a user name
+            </p>
           </div>
           <div>
-            <label class="block text-grey-darker text-sm font-bold mb-2" for="role">Role</label>
+            <label
+              class="block text-grey-darker text-sm font-bold mb-2"
+              for="role"
+              >Role</label
+            >
             <select
               class="shadow border border-red rounded w-full py-1 px-3 text-grey-darker focus:outline-none"
               id="role"
@@ -30,21 +42,30 @@
             </select>
           </div>
           <div class="col-span-2">
-            <label class="block text-grey-darker text-sm font-bold mb-2" for="sessionid">Session</label>
+            <label
+              class="block text-grey-darker text-sm font-bold mb-2"
+              for="sessionid"
+              >Session</label
+            >
             <input
               class="shadow border rounded w-full py-1 px-3 text-grey-darker focus:outline-none"
-              :class="{ invalid: validation.invalidSessionid }"
-              @blur="resetError('invalidSessionid')"
+              :class="{
+                invalid:
+                  validation.invalidSessionid || validation.inactiveSession,
+              }"
+              @blur="resetError('invalidSessionid', 'inactiveSession')"
               :disabled="isModerator"
               id="sessionid"
               type="text"
               v-model.trim="sessionId"
               :placeholder="isModerator ? '' : 'Session Id'"
             />
-            <p
-              v-if="validation.invalidSessionid"
-              class="invalidMessage"
-            >Please provide the session id</p>
+            <p v-if="validation.invalidSessionid" class="invalidMessage">
+              Please provide the session id
+            </p>
+            <p v-else-if="validation.inactiveSession" class="invalidMessage">
+              The session id is not active
+            </p>
           </div>
           <div class="mt-6 flex items-center justify-between col-span-2">
             <button
@@ -72,7 +93,13 @@
                     d="M6 8H1V6h5V4l3 3l-3 3zm10-8v13l-6 3v-3H4V9h1v3h5V3l4-2H5v4H4V0z"
                     fill="currentColor"
                   />
-                  <rect x="0" y="0" width="16" height="16" fill="rgba(0, 0, 0, 0)" />
+                  <rect
+                    x="0"
+                    y="0"
+                    width="16"
+                    height="16"
+                    fill="rgba(0, 0, 0, 0)"
+                  />
                 </svg>
               </span>
               {{ isModerator ? "Create Session" : "Join Session" }}
@@ -88,12 +115,13 @@
 import LoginHeader from "../components/auth/LoginHeader.vue";
 import { ref, computed, reactive } from "vue";
 import { useStore } from "vuex";
+import { onBeforeRouteUpdate } from "vue-router";
 export default {
   components: {
-    LoginHeader
+    LoginHeader,
   },
 
-  setup(props) {
+  setup() {
     const store = useStore();
     const userName = ref("");
     const role = ref("Moderator");
@@ -101,37 +129,47 @@ export default {
 
     const validation = reactive({
       invalidSessionid: false,
-      invalidUsername: false
+      invalidUsername: false,
+      inactiveSession: false,
     });
 
     const isModerator = computed(() => role.value === "Moderator");
 
     function startSession() {
-      validateInput();
+      if (!validateInput()) {
+        return;
+      }
       store.dispatch("toggleLoading", true);
       const signInData = {
         userName: userName.value,
         role: role.value,
-        sessionId: sessionId.value
+        sessionId: sessionId.value,
       };
       store.dispatch("signIn", signInData);
     }
 
     function validateInput() {
+      let valid = true;
       if (userName.value === "") {
         validation.invalidUsername = true;
+        valid = false;
       }
 
       if (!isModerator.value && sessionId.value === "") {
         validation.invalidSessionid = true;
+        valid = false;
       }
+      return valid;
     }
 
-    function resetError(invalidField) {
-      validation[invalidField] = false;
+    function resetError(...invalidFields) {
+      invalidFields.forEach(
+        (invalidField) => (validation[invalidField] = false)
+      );
     }
 
     function setRole(event) {
+      resetError("invalidSessionid", "inactiveSession");
       let selected = event.target.value;
       role.value = selected;
       if (selected === "Moderator") {
@@ -139,6 +177,14 @@ export default {
         sessionId.value = "";
       }
     }
+
+    onBeforeRouteUpdate(async (to, from) => {
+      if (to.query.error === "inactivesession") {
+        validation["inactiveSession"] = true;
+        return false;
+      }
+      return true;
+    });
 
     return {
       userName,
@@ -148,9 +194,9 @@ export default {
       isModerator,
       validation,
       resetError,
-      startSession
+      startSession,
     };
-  }
+  },
 };
 </script>
 

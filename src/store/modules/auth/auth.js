@@ -186,7 +186,6 @@ export default {
     async bindAuth(context, user) {
       console.log("Binding authentication");
       const uid = user.uid;
-      context.commit("setUserId", uid);
       const userName = context.getters.userName;
       const role = context.getters.role;
       if (role === "Moderator") {
@@ -196,19 +195,35 @@ export default {
         const sessionId = session.key;
         context.commit("setSessionId", sessionId);
         console.log("Set session Id: " + context.getters.sessionId);
+      } else {
+        let sessionIdInput = context.getters.sessionId;
+        await database
+          .ref("sessions/" + sessionIdInput)
+          .once("value")
+          .then(async (data) => {
+            if (!data.exists()) {
+              console.log("Session not active");
+              context.commit("setSessionId", "inactivesession");
+              await context.dispatch("signOut");
+            }
+          });
       }
       context.commit("setSessionEnded", false);
 
-      await database
-        .ref("userActiveSession/" + uid)
-        .set(context.getters.sessionId);
+      let sessionId = context.getters.sessionId;
+      if (sessionId !== "inactivesession") {
+        context.commit("setUserId", uid);
+        await database
+          .ref("userActiveSession/" + uid)
+          .set(context.getters.sessionId);
 
-      const userPath = context.getters.userPath;
-      await database.ref(userPath + "/" + uid).set({
-        userName: userName,
-        role: role,
-      });
-      console.log("Binded authentication");
+        const userPath = context.getters.userPath;
+        await database.ref(userPath + "/" + uid).set({
+          userName: userName,
+          role: role,
+        });
+        console.log("Binded authentication");
+      }
     },
 
     watchSession(context) {

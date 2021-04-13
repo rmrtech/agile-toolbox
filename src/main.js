@@ -12,7 +12,12 @@ auth.onAuthStateChanged(async (user) => {
   const signedOut = store.getters.signedOut;
   if (!user && signedOut) {
     console.log("Sign out complete");
-    router.replace("/login");
+    const sessionId = store.getters.sessionId;
+    if (sessionId === "inactivesession") {
+      router.replace({ path: "/login", query: { error: "inactivesession" } });
+    } else {
+      router.replace("/login");
+    }
   } else if (!authenticated && userName === "") {
     await store.dispatch("loadActiveUserSession", user);
     const sessionId = store.getters.sessionId;
@@ -27,8 +32,11 @@ auth.onAuthStateChanged(async (user) => {
   } else if (user && userName !== "") {
     console.log("Sign in complete and binding user");
     await store.dispatch("bindAuth", user);
-    await store.dispatch("stories/bindUserStories");
-    store.dispatch("watchSession");
-    router.replace("/");
+    const sessionId = store.getters.sessionId;
+    if (sessionId !== "" && sessionId !== "inactivesession") {
+      await store.dispatch("watchSession");
+      await store.dispatch("stories/bindUserStories");
+      router.replace("/");
+    }
   }
 });
