@@ -91,11 +91,17 @@ export default {
           });
         }
         context.commit("setUserHands", newUserHands);
+        context.dispatch("users/updateUserVotingStatus", newUserHands, {
+          root: true,
+        });
       });
 
       userHands.on("child_removed", (data) => {
         const emptyUserHands = [];
         context.commit("setUserHands", emptyUserHands);
+        context.dispatch("users/updateUserVotingStatus", emptyUserHands, {
+          root: true,
+        });
       });
 
       userHands.on("child_changed", (data) => {
@@ -108,6 +114,9 @@ export default {
           });
         }
         context.commit("setUserHands", changedUserHands);
+        context.dispatch("users/updateUserVotingStatus", changedUserHands, {
+          root: true,
+        });
       });
     },
 

@@ -18,19 +18,27 @@
       <tbody v-if="hasStories" class="bg-white divide-y divide-gray-200">
         <tr v-for="userstory in userStories" :key="userstory.storyId">
           <td class="w-3 min-w-min">
-            <div class="text-sm font-medium text-gray-900">{{ userstory.storyId }}</div>
+            <div class="text-sm font-medium text-gray-900">
+              {{ userstory.storyId }}
+            </div>
           </td>
           <td>
-            <div class="w-48 min-w-min text-sm text-gray-900">{{ userstory.description }}</div>
+            <div class="w-48 min-w-min text-sm text-gray-900">
+              {{ userstory.description }}
+            </div>
           </td>
           <td>
-            <span :class="statusStyle(userstory.status)">{{ userstory.status }}</span>
+            <span :class="statusStyle(userstory.status)">{{
+              userstory.status
+            }}</span>
           </td>
           <td>
             <div
               class="mx-auto w-2 text-sm text-center font-medium text-gray-900"
               :class="{ animatepoint: isGroomedStory(userstory.storyId) }"
-            >{{ userstory.points }}</div>
+            >
+              {{ userstory.points }}
+            </div>
           </td>
           <td class="text-center text-sm font-medium w-36 min-w-min">
             <groom-button
@@ -48,7 +56,10 @@
                 v-if="isModerator && isGroomedStory(userstory.storyId)"
                 @click="cancelGrooming(userstory.storyId, userstory.points)"
               ></stop-link>
-              <delete-link v-else-if="isModerator" @click="removeStory(userstory.storyId)"></delete-link>
+              <delete-link
+                v-else-if="isModerator"
+                @click="removeStory(userstory.storyId)"
+              ></delete-link>
             </div>
           </td>
         </tr>
@@ -57,7 +68,9 @@
     <div
       class="flex justify-center items-center text-red-500 text-xl m-2"
       v-if="!hasStories"
-    >Add stories for refinement</div>
+    >
+      {{ emptyStoryMessage }}
+    </div>
   </div>
 </template>
 
@@ -72,7 +85,7 @@ export default {
   components: {
     DeleteLink,
     StopLink,
-    GroomButton
+    GroomButton,
   },
   setup() {
     const store = useStore();
@@ -83,12 +96,15 @@ export default {
     );
 
     const userStories = computed(() => store.getters["stories/allStories"]);
+    const emptyStoryMessage = computed(() =>
+      isModerator ? "Add stories for refinement" : "Stories yet to be added"
+    );
 
     const hasStories = computed(() => {
       const stories = userStories.value;
       return stories && stories.length > 0;
     });
-    const groomActionLabel = computed(() => storyStatus => {
+    const groomActionLabel = computed(() => (storyStatus) => {
       if (storyStatus === "Refined") {
         return "Regroom";
       } else if (storyStatus === "Refining") {
@@ -98,7 +114,7 @@ export default {
       }
     });
 
-    const statusStyle = computed(() => storyStatus => {
+    const statusStyle = computed(() => (storyStatus) => {
       if (storyStatus === "Refined") {
         return { rstatus: true };
       } else if (storyStatus === "Refining") {
@@ -108,11 +124,11 @@ export default {
       }
     });
 
-    const isGroomedStory = computed(() => storyId =>
-      storyId === groomedStoryId.value ? true : false
+    const isGroomedStory = computed(
+      () => (storyId) => storyId === groomedStoryId.value ? true : false
     );
 
-    const disableGroomButton = computed(() => storyId => {
+    const disableGroomButton = computed(() => (storyId) => {
       const groomStoryValue = groomedStoryId.value;
       return groomStoryValue !== "" && storyId !== groomStoryValue;
     });
@@ -150,9 +166,10 @@ export default {
       disableGroomButton,
       groomStory,
       cancelGrooming,
-      removeStory
+      removeStory,
+      emptyStoryMessage,
     };
-  }
+  },
 };
 </script>
 

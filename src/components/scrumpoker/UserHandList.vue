@@ -1,23 +1,26 @@
 <template>
   <div class="flex flex-col min-h-full">
     <div
-      class="px-3 py-1 text-sm font-semibold"
+      class="flex justify-between px-3 py-1 text-sm font-semibold"
       v-if="groomedStoryId && groomedStoryId !== ''"
-    >Story: {{groomedStoryId}}</div>
+    >
+      <div>Story: {{ groomedStoryId }}</div>
+      <div>Hands Remaining: {{ handsRemaining }}</div>
+    </div>
     <div class="flex-grow overflow-auto h-40">
       <div class="grid grid-cols-4">
         <user-hand-item
           v-for="userHand in userHands"
           :key="userHand.userId"
           :handValue="userHand.hand"
-        >{{ userHand.userId }}</user-hand-item>
+          >{{ userHand.userId }}</user-hand-item
+        >
       </div>
     </div>
     <div v-if="isModerator" class="flex-none p-2 bg-blue-50 text-right">
-      <base-button
-        :disabled="userHands.length === 0"
-        @click="toggleCards"
-      >{{toggleCard ? "Resume" : "Show"}}</base-button>
+      <base-button :disabled="userHands.length === 0" @click="toggleCards">{{
+        toggleCard ? "Resume" : "Show"
+      }}</base-button>
     </div>
   </div>
 </template>
@@ -30,13 +33,20 @@ import { useStore } from "vuex";
 export default {
   components: {
     UserHandItem,
-    BaseButton
+    BaseButton,
   },
 
   setup() {
     const store = useStore();
     const userHands = computed(() => store.getters["userhands/allUserHands"]);
+    const totalUsers = computed(() => store.getters["users/totalSessionUsers"]);
+    const handsRemaining = computed(
+      () => totalUsers.value - userHands.value.length
+    );
+
     const isModerator = store.getters.role === "Moderator";
+    let toggleCard = ref(false);
+    provide("showCards", toggleCard);
 
     const userHandSummary = computed(
       () => store.getters["userhands/userHandSummary"]
@@ -48,9 +58,6 @@ export default {
         toggleCard.value = false;
       }
     });
-
-    let toggleCard = ref(false);
-    provide("showCards", toggleCard);
 
     const groomedStoryId = computed(
       () => store.getters["stories/groomedStoryId"]
@@ -105,9 +112,10 @@ export default {
       toggleCards,
       toggleCard,
       userHands,
-      groomedStoryId
+      groomedStoryId,
+      handsRemaining,
     };
-  }
+  },
 };
 </script>
 

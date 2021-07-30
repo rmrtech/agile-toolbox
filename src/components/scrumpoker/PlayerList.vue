@@ -4,7 +4,9 @@
       v-for="user in sessionUsers"
       :key="user.userName"
       :role="user.role"
-    >{{ user.userName }}</base-user-tag>
+      :voted="user.voted"
+      >{{ user.userName }}</base-user-tag
+    >
   </div>
 </template>
 
@@ -14,7 +16,7 @@ import { useStore } from "vuex";
 import { ref, computed } from "vue";
 export default {
   components: {
-    BaseUserTag
+    BaseUserTag,
   },
 
   setup(props) {
@@ -27,9 +29,9 @@ export default {
     bindSessionUsers();
 
     return {
-      sessionUsers
+      sessionUsers,
     };
-  }
+  },
 };
 </script>
 

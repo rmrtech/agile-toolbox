@@ -129,6 +129,7 @@ export default {
     },
 
     bindUserStories(context) {
+      context.commit("setStories", []);
       const sessionPath = context.rootGetters.sessionPath;
       let userstories = database.ref(sessionPath + "/userstories");
       userstories.on("child_added", (data) => {
